@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Template</title>
+        <script
+			  src="https://code.jquery.com/jquery-3.5.1.js"
+			  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+			  crossorigin="anonymous"></script>
+        <script src="./jquerycookie.js"></script>
+        <style>
+            #body{
+                padding: 10%
+            }
+
+            .flexContainer{
+                display: flex;
+            }
+
+            .flexContainer > div{
+                width: 25%;
+                height: 250px;
+                background-color: #111;
+                padding: 1%;
+                margin: 1%;
+            }
+
+            .flexContainer .draggable{
+                width: 200px;
+                height: 200px;
+                background-color: #999;
+                padding: 1%;
+                margin: 1%;
+                cursor: move;
+            }
+
+            .flexContainer dropArea{
+                display: flex;
+            }
+
+        </style>
+    </head>
+    <body id="body">
+        <!--div id="body">
+            <div class="flexContainer">
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+            </div>
+            <div class="flexContainer">
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+            </div>
+            <div class="flexContainer">
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+                <div class="dropArea"></div>
+            </div>
+
+            <div class="flexContainer">
+                <div class="draggable" draggable="true" id="0"></div>
+                <div class="draggable" draggable="true" id="1"></div>
+                <div class="draggable" draggable="true" id="2"></div>
+            </div>
+
+            <button onclick="save()">fff</button>
+            
+        </div-->
+
+        
+        
+    </body>
+</html>
+
+
+<script>
+
+    const body = document.querySelector("#body");
+   function makeGrid(number, ele){
+        for(let i = 0; i < number; i++){
+            let flexCon = document.createElement("div")
+            flexCon.classList.add("flexContainer");
+            for(let j = 0; j<ele; j++){
+                let dropA = document.createElement("div")
+                dropA.classList.add("dropArea");
+                
+                flexCon.appendChild(dropA);
+            }
+            body.appendChild(flexCon);
+        }
+
+   }
+   function makeMoveable(number, ele){
+        for(let i = 0; i < number; i++){
+            let flexCon = document.createElement("div")
+            flexCon.classList.add("flexContainer");
+            for(let j = 0; j<ele; j++){
+                let dropA = document.createElement("div")
+                dropA.classList.add("draggable");
+                dropA.setAttribute("draggable", true);
+                dropA.id = j;
+                flexCon.appendChild(dropA);
+            }
+            body.appendChild(flexCon);
+        }
+
+   }
+
+  
+
+   
+   
+    let contentLoc = localStorage.getItem("content");
+    //console.log(contentLoc);
+
+    /*window.addEventListener('load', (event) => {
+            //let body = document.getElementsByClassName("body");
+            $('body').append(firstTemp);
+        }); */
+    if(localStorage.getItem("content") === null){
+        
+        makeGrid(3,4);
+        makeMoveable(1,3);
+    }else{
+        let body = document.querySelector("#body");
+        //let content = localStorage.getItem("content");
+        //body.appendChild(contentLoc);
+        //$('body').append(contentLoc)
+        body.innerHTML = contentLoc
+        //console.log("seeing this");
+    }
+   
+
+    function save() {
+        let Update = document.querySelector("#body");
+        localStorage.setItem("content", Update.innerHTML); 
+    }
+
+
+    /* $.cookie("cookie", $('#body').html());
+
+    // get
+    /*var content = $.cookie("cookie");
+    var $rentContainer = $('<div class="">' + content + '</div>');
+
+    $('body').append($rentContainer);*/
+
+
+   
+
+    
+
+    let dropAreaItems = document.querySelectorAll(".dropArea");
+    let draggableItems = document.querySelectorAll(".draggable");
+
+
+
+
+    function draggingStarts(e){
+        e.dataTransfer.setData("text/plain", e.target.className);
+        e.dataTransfer.setData("application/my-app", e.target.id);
+        e.dataTransfer.effectAllowed = "move";
+    }
+
+    function draggingOver(e){
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    }
+
+    function draggingStops(e){
+        e.preventDefault();
+        let itemClass = e.dataTransfer.getData("text/plain");
+        let id = e.dataTransfer.getData("application/my-app");
+        let item = document.getElementsByClassName(itemClass);
+        //console.log(id);
+        //event.target.style.background = "red";
+        e.target.appendChild(item[id]);
+        save()
+    }
+
+    
+    draggableItems.forEach(function(dragItem) {
+        dragItem.addEventListener("dragstart", draggingStarts);
+    });
+    
+
+    
+
+    dropAreaItems.forEach(
+        function(dropItem){
+            dropItem.addEventListener("dragover", draggingOver, false);
+            dropItem.addEventListener("drop", draggingStops, false);
+        });
+</script>
+
+
+<!--
+let firstTemp = `
+        <div id="body">
+                    <div class="flexContainer">
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                    </div>
+                    <div class="flexContainer">
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                    </div>
+                    <div class="flexContainer">
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                        <div class="dropArea"></div>
+                    </div>
+
+                    <div class="flexContainer">
+                        <div class="draggable" draggable="true" id="0"></div>
+                        <div class="draggable" draggable="true" id="1"></div>
+                        <div class="draggable" draggable="true" id="2"></div>
+                    </div>
+
+                    <button onclick="saveText()">fff</button>
+                    
+                </div>
+   
+   `;
+            -->
