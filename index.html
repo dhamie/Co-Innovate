@@ -6,15 +6,18 @@
         <title>Co-Innovate</title>
 
         <style>
+            /* css stlying for div with body id*/
             #body{
                 padding: 10%
             }
 
+            /* css stlying for div with class name flexContainer*/
             .flexContainer{
                 display: flex;
                 flex-direction: row;
             }
 
+            /* css stlying for child element div whose parent is of class name flexContainer*/
             .flexContainer > div{
                 width: 25%;
                 height: 250px;
@@ -23,17 +26,16 @@
                 margin: 1%;
             }
 
+            /* css stlying for div with class name draggable*/
             .flexContainer .draggable{
                 width: 100px;
                 height: 100px;
                 padding: 1%;
                 margin: 1%;
                 cursor: move;
-            }
+            }            
 
-
-            
-
+            /* css stlying for div with class name dropArea*/
             .flexContainer .dropArea{
                 display: flex;
                 flex-direction: row;
@@ -42,16 +44,22 @@
         </style>
     </head>
     <body>
-        <div id="body"></div>       
+        <!-- Beginning of div with id name body -->
+        <div id="body"></div>  
+        <!-- End of div with id name body -->     
     </body>
 </html>
 
 
 <script>
 
-    const colorsArr = ["red", "green", "blue", "purpl"];
+    const colorsArr = ["red", "green", "blue"]; //array of colors for moveable divs
+    const body = document.querySelector("#body"); //get the element with id body 
+    let contentLoc = localStorage.getItem("content"); //get value of key named content from local storage
+    let dropAreaItems = document.querySelectorAll(".dropArea"); //get all elements with class name dropArea
+    let draggableItems = document.querySelectorAll(".draggable"); //get all elements with class name draggable
 
-    const body = document.querySelector("#body");
+    //function to create the grid boxes that would be occupied by moveable elements 
     function makeGrid(number, ele){
             for(let i = 0; i < number; i++){
                 let flexCon = document.createElement("div")
@@ -66,6 +74,8 @@
             }
 
     }
+
+    //function to create the moveable boxes
     function makeMoveable(number, ele){
             for(let i = 0; i < number; i++){
                 let flexCon = document.createElement("div")
@@ -81,70 +91,52 @@
                 body.appendChild(flexCon);
             }
 
-    }
-
-  
-
+    }  
    
-   
-    let contentLoc = localStorage.getItem("content");
-
+    
+    //if statement to check if there is content on localstorage and if not creat grid boxes
     if(localStorage.getItem("content") != null){
-        
-
         body.innerHTML = contentLoc
     }else{
         makeGrid(3,4);
         makeMoveable(1,3);
     }
    
-
+    //function to replace the value of key 'content' in local storage
     function save() {
         let Update = document.querySelector("#body");
         localStorage.setItem("content", Update.innerHTML); 
     }
 
 
-
-
-
-   
-
-    
-
-    let dropAreaItems = document.querySelectorAll(".dropArea");
-    let draggableItems = document.querySelectorAll(".draggable");
-
-
-
-
+    //function that is initiated when a moveable box is first clicked
     function draggingStarts(e){
         e.dataTransfer.setData("text/plain", e.target.id);
         e.dataTransfer.effectAllowed = "move";
     }
 
+    //function that is initiated when a moveable box is being dragged over elements with class name dropArea
     function draggingOver(e){
         e.preventDefault();
         e.dataTransfer.dropEffect = "move";
     }
 
+    //function that is initiated when a moveable box is drop over elements with class name dropArea
     function draggingStops(e){
         e.preventDefault();
         let id = e.dataTransfer.getData("text/plain");
         let item = document.getElementById(id);
-        console.log(item);
         e.target.appendChild(item);
         save()
     }
 
-    
+    //foreach loop that adds an event listner to all elements with class name draggable
     draggableItems.forEach(function(dragItem) {
         dragItem.addEventListener("dragstart", draggingStarts);
-    });
-    
+    }); 
 
     
-
+    //foreach loop that adds event listners to all elements with class name dropArea
     dropAreaItems.forEach(
         function(dropItem){
             dropItem.addEventListener("dragover", draggingOver, false);
