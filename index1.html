@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Co-Innovate</title>
+
+        <style>
+            /* css stlying for div with body id*/
+            #body{
+                padding: 10%
+            }
+
+            /* css stlying for div with class name flexContainer*/
+            .flexContainer{
+                display: flex;
+                flex-direction: row;
+            }
+
+            #flexContainerDrag{
+                display: flex;
+                flex-direction: row;
+            }
+
+            /* css stlying for child element div whose parent is of class name flexContainer*/
+            .flexContainer > div{
+                width: 25%;
+                height: 250px;
+                background-color: #111;
+                padding: 1%;
+                margin: 1%;
+            }
+
+            /* css stlying for div with class name draggable*/
+            .draggable{
+                width: 100px;
+                height: 100px;
+                padding: 1%;
+                margin: 1%;
+                cursor:grab;
+            }            
+
+            /* css stlying for div with class name dropArea*/
+            .flexContainer .dropArea{
+                display: flex;
+                flex-direction: row;
+            }
+
+        </style>
+    </head>
+    <body>
+        <!-- Beginning of div with id name body -->
+        <div id="body">
+            <!-- Beginning of first div with class name flexContainer that holds the non-moveable boxes  -->
+            <div class="flexContainer">
+                <div class="dropArea" id="dropArea0"></div>
+                <div class="dropArea" id="dropArea1"></div>
+                <div class="dropArea" id="dropArea2"></div>
+                <div class="dropArea" id="dropArea3"></div>
+            </div>
+            <!-- End of first div -->
+
+            <!-- Beginning of second div with class name flexContainer that holds the non-moveable boxes  -->
+            <div class="flexContainer">
+                <div class="dropArea" id="dropArea4"></div>
+                <div class="dropArea" id="dropArea5"></div>
+                <div class="dropArea" id="dropArea6"></div>
+                <div class="dropArea" id="dropArea7"></div>
+            </div>
+            <!-- End of second div -->
+
+            <!-- Beginning of third div with class name flexContainer that holds the non-moveable boxes  -->
+            <div class="flexContainer">
+                <div class="dropArea" id="dropArea8"></div>
+                <div class="dropArea" id="dropArea9"></div>
+                <div class="dropArea" id="dropArea10"></div>
+                <div class="dropArea" id="dropArea11"></div>
+            </div>
+            <!-- End of third div -->
+
+            <!-- Beginning of div with class name flexContainerDrag that holds the moveable boxes  -->
+            <div id="flexContainerDrag"></div>
+            <!-- End of div -->
+
+        </div>  
+        <!-- End of div with id name body -->     
+    </body>
+</html>
+
+
+<script>
+    boxes = 3; //number of boxes to be created
+    
+    let dragFlex= document.querySelector("#flexContainerDrag"); //get element with id name #flexContainerDrag and store it 
+
+
+    //function to create moveable divs when page is first visted or when new moveable box is to be added 
+    function makeMoveable(number, appBox, numStart){
+            for(let i = 0; i < number; i++){
+                    let dragArea = document.createElement("div")
+                    dragArea.classList.add("draggable");
+                    dragArea.setAttribute("draggable", true);
+                    dragArea.id = "drag" + numStart;
+                    dragArea.style.backgroundColor = "red";
+                    appBox.appendChild(dragArea);
+                    numStart++;
+            }
+
+    }
+    
+    //function to recreate moveable divs when page is revisited 
+    function recreateMoveable(key, value){
+                    let dragArea = document.createElement("div")
+                    dragArea.classList.add("draggable");
+                    dragArea.setAttribute("draggable", true);
+                    dragArea.id = key;
+                    dragArea.style.backgroundColor = "red";
+                    value.appendChild(dragArea);
+
+    } 
+   
+
+    //function to set cookie values 
+    function setCookie(name, value, expireDay) {
+        let date = new Date();
+        date.setTime(date.getTime() + (expireDay * 24 * 60 * 60 * 1000));
+        let expiresOn = "expires="+date.toUTCString();
+        document.cookie = name + "=" + value + ";" + expiresOn + ";path=/";
+    }
+
+    //function to get cookie values from browser
+    function getCookies(){
+        let pairs = document.cookie.split(";");
+        let cookies = {};
+        for (var i=0; i<pairs.length; i++){
+            var pair = pairs[i].split("=");
+            cookies[(pair[0]+'').trim()] = unescape(pair.slice(1).join('='));
+        }
+        return cookies;
+    }
+       
+
+    let lenghtOfCook = Object.entries(getCookies()).length; //get length of cookies in browser
+    let overFlow = boxes - lenghtOfCook; //difference between a number of purposed created boxes and length of cookies and store in variable overflow
+    
+  
+
+    //if statement to check the first index length of gotten cookie is greater than 0
+    if(Object.entries(getCookies())[0][0].length > 0){            
+        
+        //if statement to check if overflow is greater than zero
+        if( overFlow > 0 ){
+            iniVal = boxes - overFlow;
+            //for loop to create the moveable boxes and append to right boxes
+            for(let i = 0; i < iniVal; i++){ 
+                let key = Object.entries(getCookies())[i][0];
+                let value = Object.entries(getCookies())[i][1];
+                let box = document.getElementById(value);
+                console.log(box);
+                recreateMoveable(key, box);
+            }
+            makeMoveable(overFlow, dragFlex, lenghtOfCook); //call of makeMoveable function
+            //end of if statement
+
+            //start of else statement
+        }else {
+            //for loop to create the moveable boxes and append to right boxes
+            for(let i = 0; i < boxes; i++){
+                let key = Object.entries(getCookies())[i][0];
+                let value = Object.entries(getCookies())[i][1];
+                let box = document.getElementById(value);
+                console.log(box);
+                recreateMoveable(key, box);
+            }
+        }
+        //end of if statement
+        
+    }else{
+        makeMoveable(boxes, dragFlex, 0);//call of makeMoveable function
+    }
+    //end of if statement
+
+    //function to save movement of boxes
+    function save(boxid, dropid) {  
+        setCookie(boxid, dropid, 1);  
+    }
+
+    
+ 
+
+
+
+    let draggableItems = document.querySelectorAll(".draggable"); //get all elements with class name draggable
+    let dropAreaItems = document.querySelectorAll(".dropArea"); //get all elements with class name dropArea
+    //function that is initiated when a moveable box is first clicked
+    function draggingStarts(e){
+        e.dataTransfer.setData("text/plain", e.target.id);
+        e.dataTransfer.effectAllowed = "move";
+    }
+
+    //function that is initiated when a moveable box is being dragged over elements with class name dropArea
+    function draggingOver(e){
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    }
+
+    //function that is initiated when a moveable box is drop over elements with class name dropArea
+    function draggingStops(e){
+        e.preventDefault();
+        let id = e.dataTransfer.getData("text/plain");
+        let item = document.getElementById(id);
+        console.log(item);
+        let key = item.id;
+        let value = e.target.id;
+        e.target.appendChild(item);
+        save(key, value);
+    }
+
+    //foreach loop that adds an event listner to all elements with class name draggable
+    draggableItems.forEach(function(dragItem) {
+        dragItem.addEventListener("dragstart", draggingStarts);
+    }); 
+
+    
+    //foreach loop that adds event listners to all elements with class name dropArea
+    dropAreaItems.forEach(
+        function(dropItem){
+            dropItem.addEventListener("dragover", draggingOver, false);
+            dropItem.addEventListener("drop", draggingStops, false);
+        });
+</script>
+
+

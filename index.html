@@ -56,8 +56,7 @@
     const colorsArr = ["red", "green", "blue"]; //array of colors for moveable divs
     const body = document.querySelector("#body"); //get the element with id body 
     let contentLoc = localStorage.getItem("content"); //get value of key named content from local storage
-    let dropAreaItems = document.querySelectorAll(".dropArea"); //get all elements with class name dropArea
-    let draggableItems = document.querySelectorAll(".draggable"); //get all elements with class name draggable
+    
 
     //function to create the grid boxes that would be occupied by moveable elements 
     function makeGrid(number, ele){
@@ -107,6 +106,9 @@
         let Update = document.querySelector("#body");
         localStorage.setItem("content", Update.innerHTML); 
     }
+
+    let dropAreaItems = document.querySelectorAll(".dropArea"); //get all elements with class name dropArea
+    let draggableItems = document.querySelectorAll(".draggable"); //get all elements with class name draggable
 
 
     //function that is initiated when a moveable box is first clicked
